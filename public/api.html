@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加拿大28开奖API接口文档 - PC28开奖数据API使用说明 @bigbigbig</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="加拿大28开奖API接口完整文档，包括PC28实时开奖API、遗漏统计接口、已开统计API、AI预测接口的详细使用说明、参数说明、返回格式和调用示例。免费开放，支持JSON格式数据。">
+    <meta name="keywords" content="加拿大28api文档,pc28api接口文档,加拿大28开奖api使用说明,pc28接口调用,开奖api文档,api使用教程,接口说明文档,开奖数据api调用,遗漏统计api文档,预测接口文档,json api文档,restful api文档,加拿大28接口使用,pc28api调用示例,开奖接口文档,api参数说明,接口返回格式,api调用教程,开奖api使用方法,pc28数据接口文档,加拿大28数据api文档">
+    <meta name="author" content="@bigbigbig">
+    <meta name="robots" content="index, follow, max-snippet:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="bingbot" content="index, follow">
+    <meta name="language" content="zh-CN">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://pc28.help/api.html">
+    
+    <!-- Sitemap -->
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://pc28.help/sitemap.xml">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pc28.help/api.html">
+    <meta property="og:title" content="加拿大28开奖API接口文档 - PC28 API使用说明">
+    <meta property="og:description" content="加拿大28开奖API接口完整文档，包括实时开奖、遗漏统计、AI预测等接口的详细使用说明和示例。">
+    <meta property="og:site_name" content="加拿大28开奖API">
+    <meta property="og:locale" content="zh_CN">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="加拿大28开奖API接口文档">
+    <meta name="twitter:description" content="PC28开奖数据API完整使用文档和调用示例">
+    
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Structured Data (JSON-LD) - WebPage -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "name": "加拿大28开奖API接口文档",
+        "headline": "PC28开奖数据API完整使用说明",
+        "description": "详细介绍加拿大28开奖API接口的使用方法，包括实时开奖、遗漏统计、AI预测等接口的调用说明",
+        "url": "https://pc28.help/api.html",
+        "datePublished": "2025-01-01",
+        "dateModified": "2026-01-29",
+        "inLanguage": "zh-CN",
+        "author": {
+            "@type": "Person",
+            "name": "@bigbigbig"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "加拿大28开奖API"
+        },
+        "isPartOf": {
+            "@type": "WebSite",
+            "name": "加拿大28开奖API",
+            "url": "https://pc28.help/"
+        }
+    }
+    </script>
+    
+    <!-- Structured Data (JSON-LD) - BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "首页",
+                "item": "https://pc28.help/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "API文档",
+                "item": "https://pc28.help/api.html"
+            }
+        ]
+    }
+    </script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #f1f5f9 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+        code {
+            font-family: 'Courier New', monospace;
+        }
+        .endpoint {
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border-left: 4px solid #3b82f6;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-6 lg:p-8">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <div class="glass-effect rounded-2xl shadow-xl border border-white/40 p-6 sm:p-8 mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+                加拿大28开奖API接口文档
+            </h1>
+            <p class="text-gray-600 mb-4">
+                本文档详细介绍了PC28加拿大开奖数据API的所有接口，包括实时开奖查询、遗漏统计、已开统计、AI智能预测等功能的使用方法。
+            </p>
+            <div class="flex gap-4">
+                <a href="/" class="text-blue-600 hover:text-blue-700 font-medium">返回首页</a>
+                <a href="/history.html" class="text-blue-600 hover:text-blue-700 font-medium">历史数据下载</a>
+            </div>
+        </div>
+
+        <!-- Base URL -->
+        <div class="glass-effect rounded-2xl shadow-xl border border-white/40 p-6 sm:p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">基础信息</h2>
+            <div class="endpoint">
+                <strong>API基础地址：</strong> <code>https://pc28.help</code>
+            </div>
+            <div class="endpoint">
+                <strong>数据格式：</strong> JSON
+            </div>
+            <div class="endpoint">
+                <strong>请求方式：</strong> GET
+            </div>
+            <div class="endpoint">
+                <strong>字符编码：</strong> UTF-8
+            </div>
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4">
+                <p class="text-amber-800">
+                    <strong>使用说明：</strong> 所有接口完全免费开放，请控制请求频率不小于1秒/次，避免对服务器造成过大压力。
+                </p>
+            </div>
+        </div>
+
+        <!-- API 1: 开奖数据 -->
+        <div class="glass-effect rounded-2xl shadow-xl border border-white/40 p-6 sm:p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">1. 实时开奖数据API</h2>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">接口地址</h3>
+            <div class="endpoint">
+                <code>GET /kj.json</code>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">请求参数</h3>
+            <table class="w-full border-collapse border border-gray-300 mb-4">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-left">参数名</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">类型</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">必填</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">limit</td>
+                        <td class="border border-gray-300 px-4 py-2">number</td>
+                        <td class="border border-gray-300 px-4 py-2">否</td>
+                        <td class="border border-gray-300 px-4 py-2">返回记录数量，默认1，最大100</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">调用示例</h3>
+            <pre><code>// 获取最新1期开奖数据
+https://pc28.help/kj.json?limit=1
+
+// 获取最近10期开奖数据
+https://pc28.help/kj.json?limit=10</code></pre>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">返回示例</h3>
+            <pre><code>{
+  "message": "success",
+  "data": [
+    {
+      "qihao": "3392278",
+      "opentime": "2026-02-03 18:58:00",
+      "opennum": "6+9+2",
+      "sum": "17"
+    }
+  ]
+}</code></pre>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">返回字段说明</h3>
+            <table class="w-full border-collapse border border-gray-300 mb-4">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-left">字段名</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">类型</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">qihao</td>
+                        <td class="border border-gray-300 px-4 py-2">string</td>
+                        <td class="border border-gray-300 px-4 py-2">期号</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">opentime</td>
+                        <td class="border border-gray-300 px-4 py-2">string</td>
+                        <td class="border border-gray-300 px-4 py-2">开奖时间（格式：YYYY-MM-DD HH:mm:ss）</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">opennum</td>
+                        <td class="border border-gray-300 px-4 py-2">string</td>
+                        <td class="border border-gray-300 px-4 py-2">开奖号码（格式：a+b+c）</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">sum</td>
+                        <td class="border border-gray-300 px-4 py-2">string</td>
+                        <td class="border border-gray-300 px-4 py-2">和值（三个号码之和，范围0-27）</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- API 2: 遗漏统计 -->
+        <div class="glass-effect rounded-2xl shadow-xl border border-white/40 p-6 sm:p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">2. 遗漏统计API</h2>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">接口地址</h3>
+            <div class="endpoint">
+                <code>GET /yl.json</code>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">功能说明</h3>
+            <p class="text-gray-600 mb-4">
+                返回当前遗漏统计数据，包括各统计类型（大小、单双、组合、和值等）距离上次出现的遗漏期数。
+            </p>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">调用示例</h3>
+            <pre><code>https://pc28.help/yl.json</code></pre>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">统计类型说明</h3>
+            <table class="w-full border-collapse border border-gray-300 mb-4">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-left">类型代码</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">说明</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">值</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">da / xiao</td>
+                        <td class="border border-gray-300 px-4 py-2">大小</td>
+                        <td class="border border-gray-300 px-4 py-2">大（和值14-27） / 小（和值0-13）</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">dan / shuang</td>
+                        <td class="border border-gray-300 px-4 py-2">单双</td>
+                        <td class="border border-gray-300 px-4 py-2">单（奇数） / 双（偶数）</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">dd / xd / ds / xs</td>
+                        <td class="border border-gray-300 px-4 py-2">组合</td>
+                        <td class="border border-gray-300 px-4 py-2">大单 / 小单 / 大双 / 小双</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">00-27</td>
+                        <td class="border border-gray-300 px-4 py-2">和值</td>
+                        <td class="border border-gray-300 px-4 py-2">28种和值统计</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">jd / jx</td>
+                        <td class="border border-gray-300 px-4 py-2">极值</td>
+                        <td class="border border-gray-300 px-4 py-2">极大（22-27） / 极小（0-5）</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">bz / dz / sz / zl</td>
+                        <td class="border border-gray-300 px-4 py-2">形态</td>
+                        <td class="border border-gray-300 px-4 py-2">豹子 / 对子 / 顺子 / 杂六</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">xb / zhong / db / bian</td>
+                        <td class="border border-gray-300 px-4 py-2">边中</td>
+                        <td class="border border-gray-300 px-4 py-2">小边（0-9） / 中（10-17） / 大边（18-27） / 边（小边+大边）</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">long / hu / he</td>
+                        <td class="border border-gray-300 px-4 py-2">龙虎合</td>
+                        <td class="border border-gray-300 px-4 py-2">龙（首位>末位） / 虎（首位<末位） / 合（首位=末位）</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- API 3: 已开统计 -->
+        <div class="glass-effect rounded-2xl shadow-xl border border-white/40 p-6 sm:p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">3. 已开统计API</h2>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">接口地址</h3>
+            <div class="endpoint">
+                <code>GET /yk.json</code>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">功能说明</h3>
+            <p class="text-gray-600 mb-4">
+                返回今日已开统计数据，统计今天各类型（大小、单双、组合、和值等）的出现次数。数据在每日0点自动重置。
+            </p>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">调用示例</h3>
+            <pre><code>https://pc28.help/yk.json</code></pre>
+            
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                <p class="text-blue-800">
+                    <strong>说明：</strong> 统计类型与遗漏统计相同，返回的是各类型在今日已开奖期数中的出现次数。
+                </p>
+            </div>
+        </div>
+
+        <!-- API 4: AI预测 -->
+        <div class="glass-effect rounded-2xl shadow-xl border border-white/40 p-6 sm:p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">4. AI智能预测API</h2>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">接口列表</h3>
+            <table class="w-full border-collapse border border-gray-300 mb-4">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-left">接口地址</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2"><code>/ds.json?limit=10</code></td>
+                        <td class="border border-gray-300 px-4 py-2">单双预测</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2"><code>/dx.json?limit=10</code></td>
+                        <td class="border border-gray-300 px-4 py-2">大小预测</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2"><code>/zh.json?limit=10</code></td>
+                        <td class="border border-gray-300 px-4 py-2">组合预测（大单/小单/大双/小双）</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2"><code>/sha.json?limit=10</code></td>
+                        <td class="border border-gray-300 px-4 py-2">杀组合预测（建议避免的组合）</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">请求参数</h3>
+            <table class="w-full border-collapse border border-gray-300 mb-4">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-left">参数名</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">类型</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">必填</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">limit</td>
+                        <td class="border border-gray-300 px-4 py-2">number</td>
+                        <td class="border border-gray-300 px-4 py-2">否</td>
+                        <td class="border border-gray-300 px-4 py-2">返回记录数量，默认10，最大100</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                <p class="text-blue-800">
+                    <strong>注意：</strong> AI预测结果仅供参考，预测准确率实时显示在首页。预测数据由AI模型分析历史数据生成，不保证100%准确。
+                </p>
+            </div>
+        </div>
+
+        <!-- API 5: 胜率统计 -->
+        <div class="glass-effect rounded-2xl shadow-xl border border-white/40 p-6 sm:p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">5. 胜率统计API</h2>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">单双胜率</h3>
+            <div class="endpoint">
+                <code>GET /api/winrate/danshuang</code>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">大小胜率</h3>
+            <div class="endpoint">
+                <code>GET /api/winrate/daxiao</code>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">组合胜率</h3>
+            <div class="endpoint">
+                <code>GET /api/winrate/combination</code>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">杀组合胜率</h3>
+            <div class="endpoint">
+                <code>GET /api/winrate/kill</code>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">返回示例</h3>
+            <pre><code>{
+  "message": "success",
+  "winRate": "68.5",
+  "hits": 68,
+  "total": 100
+}</code></pre>
+        </div>
+
+        <!-- API 6: 数据导出 -->
+        <div class="glass-effect rounded-2xl shadow-xl border border-white/40 p-6 sm:p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">6. 数据导出API</h2>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">开奖数据导出</h3>
+            <div class="endpoint">
+                <code>GET /api/export/lottery?limit=1000</code>
+            </div>
+            <p class="text-gray-600 mt-2">导出Excel格式的历史开奖记录，最多支持30000期。</p>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">统计数据导出</h3>
+            <div class="endpoint">
+                <code>GET /api/export/stats?days=30</code>
+            </div>
+            <p class="text-gray-600 mt-2">导出Excel格式的统计数据，最多支持90天。</p>
+        </div>
+
+        <!-- 使用建议 -->
+        <div class="glass-effect rounded-2xl shadow-xl border border-white/40 p-6 sm:p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">使用建议</h2>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li>建议使用HTTPS协议访问，确保数据传输安全</li>
+                <li>请求频率建议控制在1秒/次以上，避免频繁请求</li>
+                <li>建议在客户端做好缓存处理，减少不必要的请求</li>
+                <li>开奖数据实时更新，建议在开奖后2-5秒后查询</li>
+                <li>AI预测数据需要计算时间，可能略有延迟</li>
+                <li>大量数据导出建议使用Excel导出接口</li>
+            </ul>
+        </div>
+
+        <!-- 错误码说明 -->
+        <div class="glass-effect rounded-2xl shadow-xl border border-white/40 p-6 sm:p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">错误码说明</h2>
+            <table class="w-full border-collapse border border-gray-300">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-left">错误码</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">200</td>
+                        <td class="border border-gray-300 px-4 py-2">请求成功</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">400</td>
+                        <td class="border border-gray-300 px-4 py-2">请求参数错误</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">429</td>
+                        <td class="border border-gray-300 px-4 py-2">请求过于频繁</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">500</td>
+                        <td class="border border-gray-300 px-4 py-2">服务器内部错误</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">503</td>
+                        <td class="border border-gray-300 px-4 py-2">服务暂时不可用</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="glass-effect rounded-2xl shadow-xl border border-white/40 p-6 text-center">
+            <p class="text-gray-600 mb-4">如有问题或建议，欢迎联系我们</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="https://t.me/bigbigbig" target="_blank" class="text-blue-600 hover:text-blue-700 font-medium">联系我们</a>
+                <a href="https://t.me/bj111" target="_blank" class="text-green-600 hover:text-green-700 font-medium">更新公告</a>
+                <a href="https://t.me/+x-wPus7kMV4wZjFk" target="_blank" class="text-purple-600 hover:text-purple-700 font-medium">功能反馈</a>
+            </div>
+            <p class="text-sm text-gray-500 mt-4">© 2025 @BigBigBig - 加拿大28开奖API</p>
+        </div>
+    </div>
+</body>
+</html>
+

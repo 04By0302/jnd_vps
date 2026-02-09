@@ -1,0 +1,8 @@
+node_modules/
+.env
+logs/
+*.log
+output/
+.DS_Store
+lottery-api.tar.gz
+dist/

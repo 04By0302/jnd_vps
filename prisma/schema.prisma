@@ -1,0 +1,92 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model latest_lottery_data {
+  id          Int      @id @default(autoincrement())
+  qihao       String   @unique(map: "qihao") @db.VarChar(50)
+  opentime    DateTime @db.DateTime(0)
+  opennum     String   @db.VarChar(20)
+  sum_value   Int      @db.TinyInt
+  source      String   @db.VarChar(50)
+  created_at  DateTime @db.DateTime(0)
+  updated_at  DateTime @db.DateTime(0)
+  is_da       Boolean  @default(false) @db.TinyInt
+  is_xiao     Boolean  @default(false) @db.TinyInt
+  is_dan      Boolean  @default(false) @db.TinyInt
+  is_shuang   Boolean  @default(false) @db.TinyInt
+  is_jida     Boolean  @default(false) @db.TinyInt
+  is_jixiao   Boolean  @default(false) @db.TinyInt
+  combination String   @default("") @db.VarChar(10)
+  is_baozi    Boolean  @default(false) @db.TinyInt
+  is_duizi    Boolean  @default(false) @db.TinyInt
+  is_shunzi   Boolean  @default(false) @db.TinyInt
+  is_zaliu    Boolean  @default(false) @db.TinyInt
+  is_xiaobian Boolean  @default(false) @db.TinyInt
+  is_zhong    Boolean  @default(false) @db.TinyInt
+  is_dabian   Boolean  @default(false) @db.TinyInt
+  is_bian     Boolean  @default(false) @db.TinyInt
+  is_long     Boolean  @default(false) @db.TinyInt
+  is_hu       Boolean  @default(false) @db.TinyInt
+  is_he       Boolean  @default(false) @db.TinyInt
+
+  @@index([opentime(sort: Desc)])
+  @@index([created_at], map: "idx_created_at")
+  @@index([opentime], map: "idx_opentime")
+  @@index([opentime, sum_value, is_da, is_xiao, is_dan, is_shuang, is_jida, is_jixiao], map: "idx_opentime_precomputed")
+  @@map("latest_lottery_data")
+}
+
+model omission_data {
+  id             Int      @id @default(autoincrement())
+  omission_type  String   @unique @db.VarChar(10)
+  omission_count Int      @default(0)
+  updated_at     DateTime @default(now()) @db.DateTime(0)
+
+  @@index([omission_type], map: "idx_type")
+  @@map("omission_data")
+}
+
+model today_stats_data {
+  id             Int      @id @default(autoincrement())
+  qihao          String   @db.VarChar(50)
+  omission_type  String   @db.VarChar(20)
+  omission_count Int      @default(0)
+  updated_at     DateTime @default(now()) @db.DateTime(0)
+
+  @@unique([qihao, omission_type], map: "unique_qihao_type")
+  @@index([qihao, omission_type])
+  @@index([qihao], map: "idx_qihao")
+  @@index([omission_type], map: "idx_type")
+  @@map("today_stats_data")
+}
+
+model ai_predictions {
+  id            Int      @id @default(autoincrement())
+  qihao         String   @db.VarChar(50)
+  predict_type  String   @db.VarChar(20)
+  predict_value String   @db.VarChar(50)
+  opennum       String?  @db.VarChar(20)
+  sum_value     Int?     @db.TinyInt
+  result_value  String?  @db.VarChar(20)
+  hit           Boolean? @db.TinyInt
+  created_at    DateTime @default(now()) @db.DateTime(0)
+  updated_at    DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([qihao, predict_type], map: "qihao_predict_type")
+  @@index([predict_type, qihao(sort: Desc)], map: "idx_type_qihao")
+  @@index([predict_type, hit, qihao(sort: Desc)], map: "idx_type_hit_qihao")
+  @@map("ai_predictions")
+}
+
+model replication_test {
+  id         BigInt   @id @default(autoincrement())
+  token      String   @unique(map: "token") @db.VarChar(64)
+  created_at DateTime @default(now()) @db.Timestamp(0)
+}
