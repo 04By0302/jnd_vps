@@ -26,13 +26,21 @@ export const config = {
     password: process.env.READ_DB_PASSWORD || ''
   },
 
-  // 数据库连接优化参数（公网访问优化）
+  // 数据库连接优化参数（公网访问优化 + 连接池管理）
   dbConnection: {
+    // 连接超时配置（秒）
     connectTimeout: parseInt(process.env.DB_CONNECT_TIMEOUT || '60'),
     socketTimeout: parseInt(process.env.DB_SOCKET_TIMEOUT || '120'),
     poolTimeout: parseInt(process.env.DB_POOL_TIMEOUT || '60'),
+    
+    // 连接池大小
     writeConnectionLimit: parseInt(process.env.WRITE_DB_CONNECTION_LIMIT || '25'),
-    readConnectionLimit: parseInt(process.env.READ_DB_CONNECTION_LIMIT || '100')
+    readConnectionLimit: parseInt(process.env.READ_DB_CONNECTION_LIMIT || '100'),
+    
+    // 连接生命周期管理（秒）
+    idleTimeout: parseInt(process.env.DB_IDLE_TIMEOUT || '600'),        // 空闲连接超时10分钟
+    maxLifetime: parseInt(process.env.DB_MAX_LIFETIME || '1800'),       // 连接最大生命周期30分钟
+    evictionInterval: parseInt(process.env.DB_EVICTION_INTERVAL || '60') // 空闲检查间隔60秒
   },
 
   // Redis配置（跨云公网优化）
@@ -72,11 +80,11 @@ export const config = {
   // 获取Prisma主库连接字符串（带MySQL标准参数 + Prisma连接池参数）
   getWriteDBUrl(): string {
     const { host, port, database, user, password } = this.writeDB;
-    const { connectTimeout, socketTimeout, poolTimeout, writeConnectionLimit } = this.dbConnection;
+    const { connectTimeout, socketTimeout, poolTimeout, writeConnectionLimit, idleTimeout, maxLifetime } = this.dbConnection;
     
     // MySQL标准连接参数 + Prisma连接池参数
     const params = new URLSearchParams({
-      // MySQL参数
+      // MySQL连接参数
       connect_timeout: String(connectTimeout),
       read_timeout: String(socketTimeout),
       write_timeout: String(socketTimeout),
@@ -85,7 +93,10 @@ export const config = {
       ssl_mode: 'DISABLED',
       // Prisma连接池参数
       connection_limit: String(writeConnectionLimit),
-      pool_timeout: String(poolTimeout)
+      pool_timeout: String(poolTimeout),
+      // 连接生命周期管理
+      idle_timeout: String(idleTimeout),
+      max_lifetime: String(maxLifetime)
     });
     
     return `mysql://${user}:${password}@${host}:${port}/${database}?${params.toString()}`;
@@ -94,11 +105,11 @@ export const config = {
   // 获取Prisma从库连接字符串（带MySQL标准参数 + Prisma连接池参数）
   getReadDBUrl(): string {
     const { host, port, database, user, password } = this.readDB;
-    const { connectTimeout, socketTimeout, poolTimeout, readConnectionLimit } = this.dbConnection;
+    const { connectTimeout, socketTimeout, poolTimeout, readConnectionLimit, idleTimeout, maxLifetime } = this.dbConnection;
     
     // MySQL标准连接参数 + Prisma连接池参数
     const params = new URLSearchParams({
-      // MySQL参数
+      // MySQL连接参数
       connect_timeout: String(connectTimeout),
       read_timeout: String(socketTimeout),
       write_timeout: String(socketTimeout),
@@ -107,7 +118,10 @@ export const config = {
       ssl_mode: 'DISABLED',
       // Prisma连接池参数
       connection_limit: String(readConnectionLimit),
-      pool_timeout: String(poolTimeout)
+      pool_timeout: String(poolTimeout),
+      // 连接生命周期管理
+      idle_timeout: String(idleTimeout),
+      max_lifetime: String(maxLifetime)
     });
     
     return `mysql://${user}:${password}@${host}:${port}/${database}?${params.toString()}`;
@@ -148,14 +162,6 @@ export const config = {
     apiMaxLatency: parseInt(process.env.PERF_API_MAX_LATENCY || '50'),
     fetcherMaxDelay: parseInt(process.env.PERF_FETCHER_MAX_DELAY || '2000'),
     dbMaxQueryTime: parseInt(process.env.PERF_DB_MAX_QUERY_TIME || '20')
-  },
-  
-  // Cloudflare CDN配置
-  cloudflare: {
-    enabled: process.env.CF_ENABLED === 'true',
-    zoneId: process.env.CF_ZONE_ID || '',
-    apiToken: process.env.CF_API_TOKEN || '',
-    baseUrl: process.env.BASE_URL || ''
   }
 };
 

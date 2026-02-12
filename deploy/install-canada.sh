@@ -49,7 +49,7 @@ npm run build > /dev/null 2>&1
 echo "✓ 编译完成"
 
 echo "[6/6] 配置并启动服务..."
-cp deploy/.env.canada .env
+cp deploy/env.canada .env
 mkdir -p logs
 
 cat > ecosystem.config.js << 'EOF'

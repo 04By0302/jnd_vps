@@ -183,6 +183,9 @@ export async function initializeDatabaseConnections(): Promise<void> {
     
     // 启动智能健康检查
     startHealthCheck();
+    
+    // 启动连接池监控
+    startPoolMonitoring();
   } catch (error: any) {
     logger.error({ error: error.message }, '数据库连接初始化失败');
     throw error;
@@ -199,14 +202,18 @@ export async function initializeDatabaseConnections(): Promise<void> {
  * 
  * 增强功能：
  * - 连接验证
- * - 空闲连接清理
- * - 智能重连策略
+ * - 连接池状态监控
+ * - 智能重连策略（指数退避）
  * - 失败计数器
+ * - 连接泄漏检测
  */
 function startHealthCheck(): void {
   if (healthCheckInterval) {
     clearInterval(healthCheckInterval);
   }
+  
+  let reconnectDelay = 1000; // 初始重连延迟1秒
+  const maxReconnectDelay = 30000; // 最大重连延迟30秒
   
   const checkHealth = async () => {
     lastHealthCheck = Date.now();
@@ -239,23 +246,28 @@ function startHealthCheck(): void {
         writeDBHealthy = false;
       }
       
-      // 智能重连策略：连续失败少于5次时才尝试重连
+      // 智能重连策略：指数退避算法
       if (writeDBFailCount < MAX_FAIL_COUNT) {
         try {
-          logger.info('[重连] 尝试重连主库...');
+          logger.info(`[重连] 尝试重连主库... (延迟${reconnectDelay}ms)`);
+          await new Promise(resolve => setTimeout(resolve, reconnectDelay));
           await writeDB.$disconnect();
           await new Promise(resolve => setTimeout(resolve, 100));
           await writeDB.$connect();
           writeDBHealthy = true;
           writeDBFailCount = 0;
+          reconnectDelay = 1000; // 重置延迟
           logger.info('[成功] 主库重连成功');
         } catch (reconnectError: any) {
           const reconnectMsg = errorMessages[reconnectError.code] || reconnectError.message || '未知错误';
           logger.error({ 
             error: reconnectError.message, 
             errorCode: reconnectError.code,
-            failCount: writeDBFailCount 
+            failCount: writeDBFailCount,
+            nextDelay: Math.min(reconnectDelay * 2, maxReconnectDelay)
           }, `[失败] 主库重连失败: ${reconnectMsg}`);
+          // 指数退避：每次失败延迟翻倍
+          reconnectDelay = Math.min(reconnectDelay * 2, maxReconnectDelay);
         }
       } else if (writeDBFailCount === MAX_FAIL_COUNT) {
         logger.warn('[降级] 主库连续失败次数过多，降低重连频率');
@@ -290,23 +302,28 @@ function startHealthCheck(): void {
         readDBHealthy = false;
       }
       
-      // 智能重连策略：连续失败少于5次时才尝试重连
+      // 智能重连策略：指数退避算法
       if (readDBFailCount < MAX_FAIL_COUNT) {
         try {
-          logger.info('[重连] 尝试重连从库...');
+          logger.info(`[重连] 尝试重连从库... (延迟${reconnectDelay}ms)`);
+          await new Promise(resolve => setTimeout(resolve, reconnectDelay));
           await readDB.$disconnect();
           await new Promise(resolve => setTimeout(resolve, 100));
           await readDB.$connect();
           readDBHealthy = true;
           readDBFailCount = 0;
+          reconnectDelay = 1000; // 重置延迟
           logger.info('[成功] 从库重连成功');
         } catch (reconnectError: any) {
           const reconnectMsg = errorMessages[reconnectError.code] || reconnectError.message || '未知错误';
           logger.error({ 
             error: reconnectError.message, 
             errorCode: reconnectError.code,
-            failCount: readDBFailCount 
+            failCount: readDBFailCount,
+            nextDelay: Math.min(reconnectDelay * 2, maxReconnectDelay)
           }, `[失败] 从库重连失败: ${reconnectMsg}`);
+          // 指数退避：每次失败延迟翻倍
+          reconnectDelay = Math.min(reconnectDelay * 2, maxReconnectDelay);
         }
       } else if (readDBFailCount === MAX_FAIL_COUNT) {
         logger.warn('[降级] 从库连续失败次数过多，降低重连频率');
@@ -391,6 +408,15 @@ export async function testDatabaseConnection(): Promise<boolean> {
  * 关闭数据库连接
  */
 export async function closeDatabaseConnections(): Promise<void> {
+  // 停止健康检查
+  if (healthCheckInterval) {
+    clearInterval(healthCheckInterval);
+    healthCheckInterval = null;
+  }
+  
+  // 停止连接池监控
+  stopPoolMonitoring();
+  
   await writeDB.$disconnect();
   await readDB.$disconnect();
   logger.info('数据库连接已关闭');
@@ -440,6 +466,74 @@ export function logPoolStatus(): void {
       connectTimeout: `${poolConfig.readDB.connectTimeout}s`,
       socketTimeout: `${poolConfig.readDB.socketTimeout}s`
     }
-  }, '📊 数据库连接池配置');
+  }, '数据库连接池配置');
+}
+
+/**
+ * 连接池监控：检测连接泄漏和饱和
+ * 定期检查连接池使用情况
+ */
+let poolMonitorInterval: NodeJS.Timeout | null = null;
+
+export function startPoolMonitoring(): void {
+  if (poolMonitorInterval) {
+    clearInterval(poolMonitorInterval);
+  }
+  
+  // 每5分钟检查一次连接池状态
+  poolMonitorInterval = setInterval(async () => {
+    try {
+      // 执行简单查询测试连接池响应
+      const startTime = Date.now();
+      await Promise.race([
+        writeDB.$queryRaw`SELECT 1`,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('连接池响应超时')), 5000)
+        )
+      ]);
+      const writeLatency = Date.now() - startTime;
+      
+      const readStartTime = Date.now();
+      await Promise.race([
+        readDB.$queryRaw`SELECT 1`,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('连接池响应超时')), 5000)
+        )
+      ]);
+      const readLatency = Date.now() - readStartTime;
+      
+      // 如果响应时间过长，可能是连接池饱和
+      if (writeLatency > 3000) {
+        logger.warn({ 
+          latency: writeLatency,
+          poolLimit: config.dbConnection.writeConnectionLimit 
+        }, '[告警] 主库连接池响应缓慢，可能接近饱和');
+      }
+      
+      if (readLatency > 3000) {
+        logger.warn({ 
+          latency: readLatency,
+          poolLimit: config.dbConnection.readConnectionLimit 
+        }, '[告警] 从库连接池响应缓慢，可能接近饱和');
+      }
+      
+      logger.debug({ 
+        writeLatency, 
+        readLatency 
+      }, '连接池监控检查完成');
+    } catch (error: any) {
+      logger.error({ error: error.message }, '[错误] 连接池监控检查失败');
+    }
+  }, 300000); // 5分钟
+}
+
+/**
+ * 停止连接池监控
+ */
+export function stopPoolMonitoring(): void {
+  if (poolMonitorInterval) {
+    clearInterval(poolMonitorInterval);
+    poolMonitorInterval = null;
+  }
 }
 

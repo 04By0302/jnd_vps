@@ -1,0 +1,47 @@
+========================================
+加拿大VPS SSH部署命令
+========================================
+
+# 首次部署
+cd /opt
+git clone <您的GitHub仓库地址> lottery-api
+cd lottery-api
+npm install --production
+cp deploy/env.canada .env
+npx prisma generate
+npm run build
+pm2 start dist/app.js --name lottery-api --max-memory-restart 1G
+pm2 save
+pm2 startup
+pm2 logs lottery-api --lines 50
+
+========================================
+后续更新命令
+========================================
+
+cd /opt/lottery-api
+git pull origin main
+cp deploy/env.canada .env
+npm install --production
+npx prisma generate
+npm run build
+pm2 restart lottery-api
+pm2 logs lottery-api --lines 50
+
+========================================
+常用管理命令
+========================================
+
+pm2 status              # 查看状态
+pm2 logs lottery-api    # 查看日志
+pm2 restart lottery-api # 重启
+pm2 stop lottery-api    # 停止
+pm2 monit              # 监控
+
+========================================
+验证成功标志
+========================================
+
+日志应显示:
+[成功] 已启动 1 个数据源抓取器
+

@@ -41,9 +41,7 @@ export async function clearDataCachesExceptPredict(): Promise<void> {
     { name: 'Redis-开奖数据', fn: clearKjCaches },
     { name: 'Redis-遗漏统计', fn: clearYlCache },
     { name: 'Redis-已开统计', fn: clearYkCache },
-    { name: 'Redis-Excel导出', fn: clearExcelCaches },
-    // Cloudflare CDN缓存清除（异步非阻塞）
-    { name: 'Cloudflare-数据API', fn: clearCloudflareCaches }
+    { name: 'Redis-Excel导出', fn: clearExcelCaches }
   ];
 
   const results = await Promise.allSettled(
@@ -81,9 +79,7 @@ export async function clearAllDataCaches(): Promise<void> {
     { name: 'Redis-遗漏统计', fn: clearYlCache },
     { name: 'Redis-已开统计', fn: clearYkCache },
     { name: 'Redis-预测数据', fn: clearPredictCaches },
-    { name: 'Redis-Excel导出', fn: clearExcelCaches },
-    // Cloudflare CDN缓存清除（异步非阻塞）
-    { name: 'Cloudflare-数据API', fn: clearCloudflareCaches }
+    { name: 'Redis-Excel导出', fn: clearExcelCaches }
   ];
 
   const results = await Promise.allSettled(
@@ -101,22 +97,6 @@ export async function clearAllDataCaches(): Promise<void> {
   });
 }
 
-/**
- * 清除Cloudflare CDN缓存
- * 
- * 说明：仅清除数据API缓存（kj、yl、yk）
- * 预测API缓存在预测完成后单独清除
- */
-async function clearCloudflareCaches(): Promise<void> {
-  try {
-    const { purgeDataJsonCache } = await import('./cloudflare-purge');
-    await purgeDataJsonCache();
-  } catch (error) {
-    // Cloudflare清除失败不影响主流程
-    logger.warn({ error }, 'Cloudflare缓存清除失败');
-    throw error;
-  }
-}
 
 /**
  * 清除开奖数据API缓存

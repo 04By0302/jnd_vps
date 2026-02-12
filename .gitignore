@@ -1,8 +1,46 @@
+# 依赖
 node_modules/
+
+# 编译输出
+dist/
+
+# 环境变量(包含敏感信息)
 .env
+.env.local
+.env.*.local
+
+# 日志
 logs/
 *.log
+
+# 临时文件
+*.tmp
+*.temp
+
+# 输出文件
 output/
+
+# 系统文件
 .DS_Store
-lottery-api.tar.gz
-dist/
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 备份文件
+*.bak
+*.rar
+*.zip
+
+# 前端文件(已删除,由香港服务器单独管理)
+public/
+
+# 数据库
+*.db
+*.sqlite
+
+# Prisma
+prisma/.env

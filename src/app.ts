@@ -309,12 +309,6 @@ class Application {
         const { clearPredictCache } = await import('./services/predict-cache');
         await clearPredictCache(predictType);
         
-        // 3. 清除Cloudflare预测API缓存（异步非阻塞）
-        const { purgePredictJsonCache } = await import('./services/cloudflare-purge');
-        purgePredictJsonCache().catch(err => {
-          logger.warn({ error: err.message }, 'Cloudflare预测API缓存清除失败（非致命）');
-        });
-        
         logger.debug(`预测API已更新 类型:${predictType} 期号:${qihao}`);
       } catch (error) {
         logger.error(`预测API更新失败 类型:${event.predictType} 期号:${event.qihao} 错误:${error}`);

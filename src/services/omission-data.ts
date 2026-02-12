@@ -287,36 +287,39 @@ export async function calculateYilouDynamic(): Promise<YiLouData> {
  * 
  * 首次部署时执行，为所有类型创建初始记录
  * 使用动态计算获取当前真实遗漏值
+ * 使用upsert避免唯一约束冲突
  */
 export async function initializeOmissionData(): Promise<void> {
   try {
-    // 1. 检查表是否已有数据
-    const count = await readDB.omission_data.count();
-    if (count > 0) {
-      logger.info({ count }, 'omission_data表已有数据，跳过初始化');
-      return;
-    }
-    
     logger.info('开始初始化omission_data表...');
     
-    // 2. 使用统一的类型列表
+    // 1. 使用统一的类型列表
     const allTypes = getAllStatTypes();
     
-    // 3. 动态计算当前遗漏值（现在可以直接调用本模块函数）
+    // 2. 动态计算当前遗漏值
     const yilou = await calculateYilouDynamic();
     
-    // 4. 构建初始数据
-    const records = allTypes.map(type => ({
-      omission_type: type,
-      omission_count: yilou[type] || 0
-    }));
+    // 3. 使用upsert逐条插入，避免唯一约束冲突
+    let successCount = 0;
+    for (const type of allTypes) {
+      try {
+        await writeDB.omission_data.upsert({
+          where: { omission_type: type },
+          create: {
+            omission_type: type,
+            omission_count: yilou[type] || 0
+          },
+          update: {
+            omission_count: yilou[type] || 0
+          }
+        });
+        successCount++;
+      } catch (error) {
+        logger.warn({ type, error }, '插入遗漏数据失败');
+      }
+    }
     
-    // 5. 批量插入
-    await writeDB.omission_data.createMany({
-      data: records
-    });
-    
-    logger.info({ count: records.length }, '遗漏数据初始化完成');
+    logger.info({ total: allTypes.length, success: successCount }, '遗漏数据初始化完成');
     
   } catch (error) {
     logger.error({ error }, '初始化遗漏数据失败');
